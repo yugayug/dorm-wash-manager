@@ -328,7 +328,7 @@ function AdminMachineCard({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Switch
-            checked={!machine.out_of_service}
+            checked={machine.out_of_service !== true}
             onCheckedChange={onToggle}
           />
           <span className="text-xs text-muted-foreground">
