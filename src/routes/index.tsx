@@ -46,8 +46,8 @@ function DashboardPage() {
   });
 
   const machines = machinesData?.machines ?? [];
-  const availableCount = machines.filter((m) => m.status === "available" && !m.out_of_service).length;
-  const totalCount = machines.filter((m) => !m.out_of_service).length;
+  const availableCount = machines.filter((m) => m.status === "available" && m.out_of_service !== true).length;
+  const totalCount = machines.filter((m) => m.out_of_service !== true).length;
 
   // Realtime subscriptions
   useEffect(() => {
