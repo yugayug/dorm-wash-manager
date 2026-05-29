@@ -292,7 +292,9 @@ function AdminMachineCard({
     finished: { icon: <Clock className="h-4 w-4" />, label: "Finished", class: "text-info" },
   };
 
-  const config = machine.out_of_service
+  const isOutOfService = machine.out_of_service === true;
+
+  const config = isOutOfService
     ? { icon: <XCircle className="h-4 w-4" />, label: "Out of Service", class: "text-destructive" }
     : statusConfig[machine.status as keyof typeof statusConfig];
 
