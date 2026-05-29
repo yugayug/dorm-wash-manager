@@ -14,16 +14,214 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      machines: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          number: number
+          out_of_service: boolean
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          number: number
+          out_of_service?: boolean
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          number?: number
+          out_of_service?: boolean
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      occupancies: {
+        Row: {
+          created_at: string
+          duration_minutes: number
+          end_time: string
+          id: string
+          machine_id: string
+          room_number: string
+          start_time: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          created_at?: string
+          duration_minutes: number
+          end_time: string
+          id?: string
+          machine_id: string
+          room_number: string
+          start_time?: string
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          created_at?: string
+          duration_minutes?: number
+          end_time?: string
+          id?: string
+          machine_id?: string
+          room_number?: string
+          start_time?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "occupancies_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: true
+            referencedRelation: "machines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usage_history: {
+        Row: {
+          created_at: string
+          duration_minutes: number
+          end_time: string
+          id: string
+          machine_id: string
+          machine_number: number
+          released_by: string
+          room_number: string
+          start_time: string
+          user_id: string | null
+          user_name: string
+        }
+        Insert: {
+          created_at?: string
+          duration_minutes: number
+          end_time: string
+          id?: string
+          machine_id: string
+          machine_number: number
+          released_by?: string
+          room_number: string
+          start_time: string
+          user_id?: string | null
+          user_name: string
+        }
+        Update: {
+          created_at?: string
+          duration_minutes?: number
+          end_time?: string
+          id?: string
+          machine_id?: string
+          machine_number?: number
+          released_by?: string
+          room_number?: string
+          start_time?: string
+          user_id?: string | null
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_history_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "machines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      occupy_machine: {
+        Args: {
+          _duration_minutes: number
+          _machine_id: string
+          _room_number: string
+          _user_name: string
+        }
+        Returns: {
+          created_at: string
+          duration_minutes: number
+          end_time: string
+          id: string
+          machine_id: string
+          room_number: string
+          start_time: string
+          user_id: string
+          user_name: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "occupancies"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      release_machine: {
+        Args: { _force?: boolean; _machine_id: string }
+        Returns: boolean
+      }
+      sweep_expired_machines: { Args: never; Returns: number }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +348,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
