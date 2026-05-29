@@ -95,9 +95,9 @@ function AdminPage() {
 
   const handleSweep = async () => {
     setIsProcessing("sweep");
-    try {
-      const result = await sweepFn({ data: {} });
-      toast.success(`Swept ${result.count} expired machines`);
+      try {
+        const result = await sweepFn();
+        toast.success(`Swept ${result.count} expired machines`);
       queryClient.invalidateQueries({ queryKey: ["machines"] });
     } catch (err: any) {
       toast.error(err.message || "Sweep failed");
