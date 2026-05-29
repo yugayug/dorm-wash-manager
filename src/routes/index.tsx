@@ -229,9 +229,6 @@ function MachineCard({ machine }: { machine: MachineWithOccupancy }) {
     },
   };
 
-  // eslint-disable-next-line no-console
-  console.log("Machine", machine.number, "out_of_service:", machine.out_of_service, "type:", typeof machine.out_of_service);
-
   const isOutOfService = machine.out_of_service === true;
 
   const config = isOutOfService
