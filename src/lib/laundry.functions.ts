@@ -26,7 +26,7 @@ export const getAppSettings = createServerFn({ method: "GET" }).handler(
       .from("app_settings")
       .select("*");
     if (error) throw new Error(error.message);
-    const settings: Record<string, string | number | boolean | null> = {};
+    const settings: Record<string, Json> = {};
     for (const row of data ?? []) {
       settings[row.key] = row.value;
     }
