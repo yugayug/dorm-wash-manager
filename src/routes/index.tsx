@@ -275,7 +275,6 @@ function MachineCard({ machine }: { machine: MachineWithOccupancy }) {
     }
   };
 
-  const isMyMachine = machine.occupancies?.user_id === (supabase.auth.getSession().then(({ data }) => data.session?.user?.id));
 
   return (
     <>
