@@ -200,7 +200,12 @@ function StatCard({
 
 function MachineCard({ machine }: { machine: MachineWithOccupancy }) {
   const [occupyOpen, setOccupyOpen] = useState(false);
-  const [userName, setUserName] = useState("");
+  const { user } = useAuth();
+  const defaultName =
+    (user?.user_metadata?.full_name as string | undefined) ??
+    user?.email?.split("@")[0] ??
+    "";
+  const [userName, setUserName] = useState(defaultName);
   const [roomNumber, setRoomNumber] = useState("");
   const [duration, setDuration] = useState("30");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -241,23 +246,33 @@ function MachineCard({ machine }: { machine: MachineWithOccupancy }) {
     : statusConfig[machine.status as keyof typeof statusConfig];
 
   const handleOccupy = async () => {
-    if (!userName.trim() || !roomNumber.trim()) return;
+    if (!userName.trim() || !roomNumber.trim()) {
+      toast.error("Please enter both your name and room number");
+      return;
+    }
+    const mins = parseInt(duration, 10);
+    if (Number.isNaN(mins) || mins < 5 || mins > 180) {
+      toast.error("Duration must be between 5 and 180 minutes");
+      return;
+    }
     setIsSubmitting(true);
     try {
+      console.log("[occupy] submitting", { machineId: machine.id, userName, roomNumber, mins });
       await occupyFn({
         data: {
           machineId: machine.id,
           userName: userName.trim(),
           roomNumber: roomNumber.trim(),
-          durationMinutes: parseInt(duration),
+          durationMinutes: mins,
         },
       });
+      console.log("[occupy] success");
       toast.success(`Machine ${machine.number} occupied successfully`);
       setOccupyOpen(false);
-      setUserName("");
       setRoomNumber("");
       queryClient.invalidateQueries({ queryKey: ["machines"] });
     } catch (err: any) {
+      console.error("[occupy] failed", err);
       toast.error(err.message || "Failed to occupy machine");
     } finally {
       setIsSubmitting(false);
